@@ -1,0 +1,115 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.7">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="ru"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;Сообщение 💌&lt;/title&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1">body {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: linear-gradient(135deg, #6a11cb, #2575fc);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-family: Arial;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>color: white;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.card {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 30px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>border-radius: 25px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: rgba(255,255,255,0.2);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>backdrop-filter: blur(12px);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>box-shadow: 0 20px 50px rgba(0,0,0,0.3);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">h1 {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin-bottom: 20px;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">button {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 14px 28px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>border: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>border-radius: 30px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-size: 18px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-weight: bold;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#good {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: white;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>color: #2575fc;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#bad {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #ff4f7b;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>color: white;</p>
+<p class="p1">}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="card"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Привет стасик, как дела?&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="good"&gt;Отлично&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button id="bad"&gt;Плохо&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- музыка --&gt;</p>
+<p class="p1">&lt;audio id="music" preload="auto"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;source src="music.mp3" type="audio/mpeg"&gt;</p>
+<p class="p1">&lt;/audio&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">const badBtn = document.getElementById("bad");</p>
+<p class="p1">const goodBtn = document.getElementById("good");</p>
+<p class="p1">const audio = document.getElementById("music");</p>
+<p class="p2"><br></p>
+<p class="p1">// кнопка "плохо" убегает</p>
+<p class="p1">badBtn.addEventListener("click", () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const x = Math.random() * (window.innerWidth - 100);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const y = Math.random() * (window.innerHeight - 50);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>badBtn.style.position = "fixed";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>badBtn.style.left = x + "px";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>badBtn.style.top = y + "px";</p>
+<p class="p1">});</p>
+<p class="p2"><br></p>
+<p class="p1">// кнопка "отлично" включает музыку</p>
+<p class="p1">goodBtn.addEventListener("click", async () =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>audio.volume = 1.0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>await audio.play();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>} catch (e) {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>audio.muted = true;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>await audio.play();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>audio.muted = false;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">});</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
