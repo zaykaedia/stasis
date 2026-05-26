@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOOKSMAXING AI EVALUATOR</title>
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: #131316;
+            --accent-cyan: #00f2fe;
+            --accent-purple: #4facfe;
+            --text-main: #ffffff;
+            --text-muted: #8e8e93;
+            --border-glow: rgba(0, 242, 254, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Фоновое свечение */
+        .glow-bg {
+            position: fixed;
+            top: -20%;
+            left: -20%;
+            width: 140%;
+            height: 140%;
+            background: radial-gradient(circle at 50% 50%, rgba(79, 172, 254, 0.05), transparent 50%),
+                        radial-gradient(circle at 30% 20%, rgba(0, 242, 254, 0.03), transparent 40%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        /* Карточки/Экраны */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Зона загрузки */
+        .upload-zone {
+            border: 2px dashed rgba(0, 242, 254, 0.3);
+            border-radius: 16px;
+            padding: 60px 20px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px var(--border-glow);
+            background: rgba(0, 242, 254, 0.02);
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Экран сканирования */
+        .hidden {
+            display: none !important;
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .scanner-container {
+            position: relative;
+            width: 280px;
+            height: 380px;
+            margin: 0 auto 30px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Анимация лазера */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            box-shadow: 0 0 15px var(--accent-cyan), 0 0 5px var(--accent-cyan);
+            animation: scan 2.5s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+
+        /* Прогресс бар */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-cyan));
+            box-shadow: 0 0 10px var(--accent-cyan);
+            transition: width 3s linear;
+        }
+
+        .status-text {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            margin-top: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Результаты */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .results-grid { grid-template-columns: 1fr; }
+        }
+
+        .psl-score-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px;
+        }
+
+        .psl-rating {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        /* Таблица луксмаксинга */
+        .looksmax-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .looksmax-table tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .looksmax-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .looksmax-table td {
+            padding: 14px 0;
+            font-size: 1rem;
+        }
+
+        .trait-name {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .trait-value {
+            text-align: right;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: rgba(0, 242, 254, 0.1);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+        /* Кнопка перезапуска */
+        .btn-restart {
+            margin-top: 40px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+            border: none;
+            color: #000;
+            padding: 14px 36px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+        }
+
+        .btn-restart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 242, 254, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-bg"></div>
+
+    <div class="container">
+        <header>
+            <h1>Looksmaxxing AI</h1>
+            <p>Продвинутый анализ геометрии лица и структуры черепа</p>
+        </header>
+
+        <div id="screen-upload" class="card">
+            <div class="upload-zone">
+                <input type="file" id="file-input" accept="image/*">
+                <span class="upload-icon">📸</span>
+                <h3>Загрузите ваше селфи</h3>
+                <p style="color: var(--text-muted); margin-top: 10px; font-size: 0.9rem;">
+                    Для точности используйте фронтальный ракурс и нейтральное освещение
+                </p>
+            </div>
+        </div>
+
+        <div id="screen-scanning" class="card hidden">
+            <div class="scanner-container">
+                <img id="scan-preview" class="preview-img" src="" alt="Сканирование">
+                <div class="scan-line"></div>
+            </div>
+            <div class="status-text" id="status-message">Инициализация векторов лица...</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress"></div>
+            </div>
+        </div>
+
+        <div id="screen-results" class="card hidden">
+            <h2>Анализ завершен успешно</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Ваш персональный разбор по таблице идеальных пропорций</p>
+            
+            <div class="results-grid">
+                <div class="psl-score-box">
+                    <span style="color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Общий балл (PSL)</span>
+                    <div class="psl-rating" id="res-psl">6.5</div>
+                    <span class="tier-badge" id="res-tier">Chadhunt</span>
+                </div>
+
+                <div>
+                    <table class="looksmax-table">
+                        <tr>
+                            <td class="trait-name">Наклон глаз (Canthal Tilt)</td>
+                            <td class="trait-value" id="res-tilt">Положительный (+4°)</td>
+                        </tr>
+                        <tr>
+                            <td class="trait-name">Угол челюсти (Jawline)</td>
+                            <td class="trait-value" id="res-jaw">122° (Идеал)</td>
+                        </tr>
+                        <tr>
+                            <td class="trait-name">Симметрия лица</td>
+                            <td class="trait-value" id="res-symmetry">92%</td>
+                        </tr>
+                        <tr>
+                            <td class="trait-name">Midface Ratio (Средняя треть)</td>
+                            <td class="trait-value" id="res-midface">1.03 (Компактное)</td>
+                        </tr>
+                        <tr>
+                            <td class="trait-name">Процент подкожного жира</td>
+                            <td class="trait-value" id="res-fat">~12-14%</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+            <button class="btn-restart" onclick="resetApp()">Проверить другое фото</button>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById('file-input');
+        const screenUpload = document.getElementById('screen-upload');
+        const screenScanning = document.getElementById('screen-scanning');
+        const screenResults = document.getElementById('screen-results');
+        const scanPreview = document.getElementById('scan-preview');
+        const progressBar = document.getElementById('progress');
+        const statusMessage = document.getElementById('status-message');
+
+        const statuses = [
+            "Обнаружение ключевых точек лица...",
+            "Расчет угла Canthal Tilt...",
+            "Оценка нижнечелюстного угла (Gonial Angle)...",
+            "Анализ симметрии по вертикальной оси...",
+            "Сопоставление со шкалой PSL..."
+        ];
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    // Устанавливаем превью для сканирования
+                    scanPreview.src = event.target.result;
+                    
+                    // Переключаем экраны с плавной анимацией
+                    switchScreen(screenUpload, screenScanning);
+                    startScanning();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function switchScreen(from, to) {
+            from.style.opacity = '0';
+            setTimeout(() => {
+                from.classList.add('hidden');
+                to.classList.remove('hidden');
+                setTimeout(() => {
+                    to.style.opacity = '1';
+                    to.style.transform = 'scale(1)';
+                }, 50);
+            }, 400);
+        }
+
+        function startScanning() {
+            progressBar.style.width = '100%';
+            
+            // Динамическая смена надписей в процессе сканирования
+            let step = 0;
+            const interval = setInterval(() => {
+                if (step < statuses.length) {
+                    statusMessage.innerText = statuses[step];
+                    step++;
+                }
+            }, 600);
+
+            // Генерация случайных, но эстетичных результатов (чтобы симуляция выглядела правдиво)
+            setTimeout(() => {
+                clearInterval(interval);
+                generateResults();
+                switchScreen(screenScanning, screenResults);
+            }, 3200);
+        }
+
+        function generateResults() {
+            // Генерация случайных чисел в пределах "хороших" значений для фана пользователей
+            const psl = (5.5 + Math.random() * 2).toFixed(1); 
+            const tilts = ["Положительный (+3°)", "Положительный (+5°)", "Нейтральный (0°)", "Идеальный (+4°)"];
+            const jaws = ["120° (Атлетический)", "123° (Резкий)", "119° (Модельный)"];
+            const symmetries = [89, 91, 93, 94, 96];
+            const fats = ["11-13% (Низкий)", "13-15% (Норма)", "10-12% (Шреддед)"];
+
+            document.getElementById('res-psl').innerText = psl;
+            document.getElementById('res-tilt').innerText = tilts[Math.floor(Math.random() * tilts.length)];
+            document.getElementById('res-jaw').innerText = jaws[Math.floor(Math.random() * jaws.length)];
+            document.getElementById('res-symmetry').innerText = symmetries[Math.floor(Math.random() * symmetries.length)] + "%";
+            document.getElementById('res-fat').innerText = fats[Math.floor(Math.random() * fats.length)];
+
+            // Определение тира по PSL
+            const tierBadge = document.getElementById('res-tier');
+            if (psl >= 7.0) {
+                tierBadge.innerText = "GigaChad Tier";
+                tierBadge.style.borderColor = "#ff4f79";
+                tierBadge.style.color = "#ff4f79";
+            } else if (psl >= 6.2) {
+                tierBadge.innerText = "Chadlite / High-Tier Male";
+                tierBadge.style.borderColor = "var(--accent-cyan)";
+                tierBadge.style.color = "var(--accent-cyan)";
+            } else {
+                tierBadge.innerText = "Above Average (Потенциал к росту)";
+                tierBadge.style.borderColor = "var(--accent-purple)";
+                tierBadge.style.color = "var(--accent-purple)";
+            }
+        }
+
+        function resetApp() {
+            fileInput.value = "";
+            progressBar.style.width = '0%';
+            statusMessage.innerText = "Инициализация векторов лица...";
+            switchScreen(screenResults, screenUpload);
+        }
+    </script>
+</body>
+</html>
